@@ -1,50 +1,46 @@
-class MinHeap:
+"""
+
+Para este exercício, foi implementado uma Lista de Adjacência.
+
+Justificação:
+
+Se o objetivo for encontrar a rota mais curta entre dois barros, a Lista de Adjacência com BFS (Breadth-first search) é uma melhor opção porque a .
+
+"""
+
+class MapaCidade:
     def __init__(self):
-        self.heap = []
-    
-    def insert(self, item):
-        self.heap.append(item)
-        self._heapify_up(len(self.heap) - 1) # Correcting positioning.
+        self.lista_adjacencia = {}
 
-    def pop(self):
-        if len(self.heap) == 0:
-            return None
-        if len(self.heap) == 1:
-            return self.heap.pop()
-        # Reordering heap.
-        root = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self._heapify_down(0)
-        return root
-    
-    def _heapify_up(self, index):
-        parent_index = (index - 1) // 2
-        while index > 0 and self.heap[index][0] < self.heap[parent_index][0]:
-            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
-            index = parent_index
-            parent_index = (index - 1) // 2
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def _heapify_down(self, index):
-        smallest = index
-        left_child = 2 * index + 1
-        right_child = 2 * index + 2
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
+            self.lista_adjacencia[vertice2].append(vertice1)
 
-        if left_child < len(self.heap) and self.heap[left_child][0] < self.heap[smallest][0]:
-            smallest = left_child
-        if right_child < len(self.heap) and self.heap[right_child][0] < self.heap[smallest][0]:
-            smallest = right_child
-        
-        if smallest != index:
-            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
-            self._heapify_down(smallest)
+    def bfs(self, inicio):
+        visitados = set()
+        fila = [inicio]
 
-tarefas = [(3, "Tarefa A"), (1, "Tarefa B"), (2, "Tarefa C")]
+        while fila:
+            vertice = fila.pop(0)
+            if vertice not in visitados:
+                print(vertice, end=" ")
+                visitados.add(vertice)
+                fila.extend(self.lista_adjacencia[vertice])
 
-heap = MinHeap()
+cidade = MapaCidade()
+bairros = ["Centro", "Jardins", "Vila Madalena", "Brooklin", "Moema", "Pinheiros", "Itaim Bibi"]
 
-for i in tarefas:
-    heap.insert(i)
+for i in bairros:
+    cidade.adicionar_vertice(i)
 
-while len(heap.heap) > 0:
-    prioridade, tarefa = heap.pop()
-    print(f"{tarefa} - {prioridade}")
+ruas = [("Centro", "Jardins"), ("Centro", "Pinheiros"), ("Jardins", "Moema"), ("Moema", "Brooklin"), ("Brooklin", "Itaim Bibi"), ("Pinheiros", "Vila Madalena")]
+
+for i, j in ruas:
+    cidade.adicionar_aresta(i, j)
+
+cidade.bfs("Centro")

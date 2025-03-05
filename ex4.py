@@ -1,61 +1,56 @@
 """
 
-A função pop em uma MinHeap funciona dessa forma:
+Resultado:
 
-Depois de verificar se a lista está vazia ou possui apenas um elemento, pop() tira o último elemento e coloca ele na raiz (assim, sobreescrevendo o valor do nó raiz e removendo o dado que lá estava).
-Depois, _heapify_down() é chamado com o valor 0 como argumento. Este reorganizará a lista recursivamente e condizente com a estrutura MinHeap (sendo necessário).
+Lista de Adjacência do Grafo:
+Centro -> ['Bairro A', 'Bairro B']
+Bairro A -> ['Centro', 'Bairro C']
+Bairro B -> ['Centro', 'Bairro C']
+Bairro C -> ['Bairro A', 'Bairro B', 'Bairro D']
+Bairro D -> ['Bairro C']
+Vizinhos de Bairro C: ['Bairro A', 'Bairro B', 'Bairro D']
+
+Resposta:
+
+A lista de adjacência otimiza o armazenamento das conexões comparado à matriz de adjacência pois a matriz de adjacência ocupa um espaço para cada vértice na matriz para representar conexões de cada vértice,
+independentemente se o vértice em questão possui uma relação existente ou não (os valores sendo 0 ou 1).
 
 """
 
-class MinHeap:
+class Grafo:
     def __init__(self):
-        self.heap = []
-    
-    def insert(self, item):
-        self.heap.append(item)
-        self._heapify_up(len(self.heap) - 1) # Correcting positioning.
+        self.lista_adjacencia = {}
 
-    def pop(self):
-        if len(self.heap) == 0:
-            return None
-        if len(self.heap) == 1:
-            return self.heap.pop()
-        # Reordering heap.
-        root = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self._heapify_down(0)
-        return root
-    
-    def _heapify_up(self, index):
-        parent_index = (index - 1) // 2
-        while index > 0 and self.heap[index][0] < self.heap[parent_index][0]:
-            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
-            index = parent_index
-            parent_index = (index - 1) // 2
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def _heapify_down(self, index):
-        smallest = index
-        left_child = 2 * index + 1
-        right_child = 2 * index + 2
 
-        if left_child < len(self.heap) and self.heap[left_child][0] < self.heap[smallest][0]:
-            smallest = left_child
-        if right_child < len(self.heap) and self.heap[right_child][0] < self.heap[smallest][0]:
-            smallest = right_child
-        
-        if smallest != index:
-            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
-            self._heapify_down(smallest)
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
+            self.lista_adjacencia[vertice2].append(vertice1)
+    def mostrar_grafo(self):
+        for vertice in self.lista_adjacencia:
+            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
 
-tarefas = [(3, "Tarefa A"), (1, "Tarefa B"), (2, "Tarefa C")]
+    def mostrar_vizinhos(self, vertice):
+        """Exibe os vizinhos de um determinado vértice"""
+        if vertice in self.lista_adjacencia:
+            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
+        else:
+            print(f"O vértice {vertice} não existe no grafo.")
 
-heap = MinHeap()
+grafo = Grafo()
 
-for i in tarefas:
-    heap.insert(i)
+for v in ["Centro", "Bairro A", "Bairro B", "Bairro C", "Bairro D"]:
+    grafo.adicionar_vertice(v)
 
-heap.pop()
+arestas = [("Centro", "Bairro A"), ("Centro", "Bairro B"), ("Bairro A", "Bairro C"), ("Bairro B", "Bairro C"), ("Bairro C", "Bairro D")]
+for v1, v2 in arestas:
+    grafo.adicionar_aresta(v1, v2)
 
-while len(heap.heap) > 0:
-    prioridade, tarefa = heap.pop()
-    print(f"{tarefa} - {prioridade}")
+print("Lista de Adjacência do Grafo:")
+grafo.mostrar_grafo()
+
+grafo.mostrar_vizinhos("Bairro C")

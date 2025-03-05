@@ -1,7 +1,27 @@
 """
 
-A estrutura de dado heap é útil ao aplicá-la em situações que requerem uma forma de prioridade determinada por uma certa regra de negócio (o valor é o fator determinante, e não a ordem de inserção como em filas, por exemplo).
+• Desenho do grafo:
 
-Alguns exemplos são: fila de atendimento de um hospital, scheduler de tasks, ao utilizar o algoritmo de ordenação heapsort e load balacing para distribuir tarefas e requisições para servidores.
+      Alice
+      /   \
+     /     \ 
+    /       \
+   Bob   Carlos
+    |    /    \
+    |   /      \
+    Diana     Eduardo
 
-"""
+• Lista dos vértices e arestas:
+
+- Vértices (e suas respectivas arestas):
+    Alice (arestas: entre Bob e entre Carlos),
+    Bob (arestas: entre Alice e entre Diana),
+    Carlos (arestas: entre Alice, entre Diana e entre Eduardo),
+    Diana (arestas: entre Bob e entre Carlos),
+    Eduardo (aresta: entre Carlos),
+
+• Resposta:
+
+Este grafo é não direcionado, pois uma conexão entre amigos em uma rede social é bidirecional e precisa ser aceita entre dois indivíduos.
+
+""

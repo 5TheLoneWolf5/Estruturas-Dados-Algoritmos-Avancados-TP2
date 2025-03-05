@@ -1,75 +1,63 @@
 """
 
-Essa é a nova estrutura da árvore:
+Resultado:
 
-[50, 45, 30, 40, 10, 20, 35]
+   A  B  C  D
+A [0, 1, 1, 0]
+B [1, 0, 0, 1]
+C [1, 0, 0, 1]
+D [0, 1, 1, 0]
 
-Levando em consideração a regra do MaxHeap de um nó na árvore não poder ter um filho com valor maior que o valor do mesmo, o _heapify_up() da classe organizará a estrutura em array que guarda a árvore jeap.
-O elemento 45 assumirá o índex 1 na array, sendo o filho esquerdo do nó raíz de valor 50.
+Resposta:
+
+Se o grafo fosse direcionado, um vértice poderia ter uma relação unidirecional com um outro vértice (por exemplo: A ---> B, mas B não seria conectado com A), assim como também uma relação bidirecional (<--->), caso desejado.
+
+No caso deste grafo não direcionado, todas arestas criadas entre dois vértices são bidirecionais.
 
 """
 
-class MaxHeap:
-    def __init__(self):
-        self.heap = []
-    
-    def insert(self, item):
-        self.heap.append(item)
-        self._heapify_up(len(self.heap) - 1)
-
-    def pop(self):
-        if len(self.heap) == 0:
-            return None
-        if len(self.heap) == 1:
-            return self.heap.pop()
-        # Reordering heap.
-        root = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self._heapify_down(0)
-        return root
-    
-    def _heapify_up(self, index):
-        parent_index = (index - 1) // 2
-        while index > 0 and self.heap[index] > self.heap[parent_index]:
-            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
-            index = parent_index
-            parent_index = (index - 1) // 2
-
-    def _heapify_down(self, index):
-        largest = index
-        left_child = 2 * index + 1
-        right_child = 2 * index + 2
-
-        if left_child < len(self.heap) and self.heap[left_child] > self.heap[largest]:
-            largest = left_child
-        if right_child < len(self.heap) and self.heap[right_child] > self.heap[largest]:
-            largest = right_child
+class GrafoMatriz:
+    def __init__(self, num_vertices):
+        self.num_vertices = num_vertices
+        self.matriz = [[0] * num_vertices for _ in range(num_vertices)]
+        self.vertices = {}
+        self.indice_para_vertice = {}
+        self.contador = 0
         
-        if largest != index:
-            self.heap[index], self.heap[largest] = self.heap[largest], self.heap[index]
-            self._heapify_down(largest)
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.vertices and self.contador < self.num_vertices:
+            self.vertices[vertice] = self.contador
+            self.indice_para_vertice[self.contador] = vertice
+            self.contador += 1
 
-    def peek(self):
-        if len(self.heap) > 0:
-            return self.heap[0]
-        return None
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.vertices and vertice2 in self.vertices:
+            i, j = self.vertices[vertice1], self.vertices[vertice2]
+            self.matriz[i][j] = 1
+            self.matriz[j][i] = 1
 
-    def size(self):
-        return len(self.heap)
 
-    def is_empty(self):
-        return len(self.heap) == 0
-    
-tarefas =  [50, 30, 40, 10, 20, 35]
+    def mostrar_matriz(self):
+        print("Matriz de Adjacência:")
+        print("  ", "  ".join(self.vertices.keys()))
+        for i, linha in enumerate(self.matriz):
+            print(self.indice_para_vertice[i], linha)
 
-heap = MaxHeap()
+    def mostrar_vizinhos(self, vertice):
+        if vertice in self.vertices:
+            indice = self.vertices[vertice]
+            vizinhos = [self.indice_para_vertice[i] for i in range(self.num_vertices) if self.matriz[indice][i] == 1]
+            print(f"Vizinhos de {vertice}: {vizinhos}")
+        else:
+            print(f"O vértice {vertice} não existe no grafo.")
 
-for i in tarefas:
-    heap.insert(i)
+grafo = GrafoMatriz(4)
 
-heap.insert(45) # New element.
+for v in ["A", "B", "C", "D"]:
+    grafo.adicionar_vertice(v)
 
-print(f"Maior elemento: {heap.peek()}")
+arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "D")]
+for v1, v2 in arestas:
+    grafo.adicionar_aresta(v1, v2)
 
-while not heap.is_empty():
-    print(f"Removido: {heap.pop()}")
+grafo.mostrar_matriz()
