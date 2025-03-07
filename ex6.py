@@ -1,57 +1,11 @@
 """
 
-Uma estrutura de dados Heap pode ser utilizada em vários casos onde existe uma fila de prioridade baseado em um valor, como uma fila médica, por exemplo.
+Resposta:
 
-Utilizar uma estrutura Heap pode melhorar a performance e simplicidade na implementação de um conjunto de dados baseado em prioridade (é possível acessar e remover elementos com maior ou menor prioridade).
+Dado um grafo com 1000 vértices e apenas 10 arestas, uma Lista de Adjacência seria a melhor e mais eficiente opção para armazenar os dados.
+
+- Em memória: essa estrutura guardará apenas as conexões existentes, sendo bem aplicada em grafos pouco densos como este.
+- Tempo de busca por vizinhos: é mais eficiente pois a estrutura apenas itera pelos dados associados com aquele vértice.
+- Tempo para verificar se uma aresta existe: novamente, apenas as arestas existentes seriam guardadas, o que melhora na eficiência e velocidade da busca para determinar se uma aresta existe.
 
 """
-
-class MinHeap:
-    def __init__(self):
-        self.heap = []
-    
-    def insert(self, item):
-        self.heap.append(item)
-        self._heapify_up(len(self.heap) - 1)
-
-    def pop(self):
-        if len(self.heap) == 0:
-            return None
-        if len(self.heap) == 1:
-            return self.heap.pop()
-        root = self.heap[0]
-        self.heap[0] = self.heap.pop()
-        self._heapify_down(0)
-        return root
-    
-    def _heapify_up(self, index):
-        parent_index = (index - 1) // 2
-        while index > 0 and self.heap[index][0] < self.heap[parent_index][0]:
-            self.heap[index], self.heap[parent_index] = self.heap[parent_index], self.heap[index]
-            index = parent_index
-            parent_index = (index - 1) // 2
-
-    def _heapify_down(self, index):
-        smallest = index
-        left_child = 2 * index + 1
-        right_child = 2 * index + 2
-
-        if left_child < len(self.heap) and self.heap[left_child][0] < self.heap[smallest][0]:
-            smallest = left_child
-        if right_child < len(self.heap) and self.heap[right_child][0] < self.heap[smallest][0]:
-            smallest = right_child
-        
-        if smallest != index:
-            self.heap[index], self.heap[smallest] = self.heap[smallest], self.heap[index]
-            self._heapify_down(smallest)
-
-tarefas = [(3, "Tarefa A"), (1, "Tarefa B"), (2, "Tarefa C"), (5, "Tarefa D"), (4, "Tarefa E")] # Prioridade e tarefa.
-
-agendadorTarefas = MinHeap()
-
-for i in tarefas:
-    agendadorTarefas.insert(i)
-
-while len(agendadorTarefas.heap) > 0:
-    prioridade, tarefa = agendadorTarefas.pop()
-    print(f"{tarefa} - {prioridade}")

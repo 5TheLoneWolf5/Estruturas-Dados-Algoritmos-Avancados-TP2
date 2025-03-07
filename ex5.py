@@ -2,18 +2,11 @@
 
 Resultado:
 
-Lista de Adjacência do Grafo:
-Centro -> ['Bairro A', 'Bairro B']
-Bairro A -> ['Centro', 'Bairro C']
-Bairro B -> ['Centro', 'Bairro C']
-Bairro C -> ['Bairro A', 'Bairro B', 'Bairro D']
-Bairro D -> ['Bairro C']
-Vizinhos de Bairro C: ['Bairro A', 'Bairro B', 'Bairro D']
 
-Resposta:
 
-A lista de adjacência otimiza o armazenamento das conexões comparado à matriz de adjacência pois a matriz de adjacência ocupa um espaço para cada vértice na matriz para representar conexões de cada vértice,
-independentemente se o vértice em questão possui uma relação existente ou não (os valores sendo 0 ou 1).
+Comparação de desempenho:
+
+
 
 """
 
@@ -22,35 +15,53 @@ class Grafo:
         self.lista_adjacencia = {}
 
     def adicionar_vertice(self, vertice):
-        if vertice not in self.lista_adjacencia:
+        if vertice[1] not in self.lista_adjacencia:
             self.lista_adjacencia[vertice] = []
-
 
     def adicionar_aresta(self, vertice1, vertice2):
         if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
             self.lista_adjacencia[vertice1].append(vertice2)
             self.lista_adjacencia[vertice2].append(vertice1)
+            
     def mostrar_grafo(self):
         for vertice in self.lista_adjacencia:
-            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
+            print(f"{vertice[1]} -> {self.lista_adjacencia[vertice]}")
 
     def mostrar_vizinhos(self, vertice):
-        """Exibe os vizinhos de um determinado vértice"""
         if vertice in self.lista_adjacencia:
-            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
+            print(f"Vizinhos de {vertice[1]}: {self.lista_adjacencia[vertice]}")
         else:
-            print(f"O vértice {vertice} não existe no grafo.")
+            print(f"O vértice {vertice[1]} não existe no grafo.")
+
+    def bfs(self, vertice1, vertice2):
+        visitados = set()
+        fila = [vertice1]
+ 
+        while fila:
+            vertice = fila.pop(0)
+            if vertice not in visitados:
+                if 
+                print(vertice, end=" ")
+                visitados.add(vertice)
+                fila.extend(self.lista_adjacencia[vertice])
 
 grafo = Grafo()
 
-for v in ["Centro", "Bairro A", "Bairro B", "Bairro C", "Bairro D"]:
-    grafo.adicionar_vertice(v)
+centros = [(5, "A"), (4, "B"), (2, "C"), (6, "D"), (3, "E")]
 
-arestas = [("Centro", "Bairro A"), ("Centro", "Bairro B"), ("Bairro A", "Bairro C"), ("Bairro B", "Bairro C"), ("Bairro C", "Bairro D")]
+for c in centros:
+    grafo.adicionar_vertice(c)
+
+arestas = [(centros[0], centros[1]), (centros[0], centros[2]), (centros[1], centros[3]), (centros[2], centros[4]), (centros[3], centros[4])]
 for v1, v2 in arestas:
     grafo.adicionar_aresta(v1, v2)
 
 print("Lista de Adjacência do Grafo:")
 grafo.mostrar_grafo()
 
-grafo.mostrar_vizinhos("Bairro C")
+print("Lista de Vizinhos:")
+for c in centros:
+    grafo.mostrar_vizinhos(c)
+
+print("Encontrando rota mais curta entre A e C com BFS: ")
+grafo.bfs("A", "C")

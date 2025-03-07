@@ -1,83 +1,48 @@
 """
 
-A função search() dentro da estrutura Trie percorrerá cada letra dentro da palavra buscada e tentará achar sua ocorrência (conectada com as outras letras). Caso não ache a palavra completa, a função eventualmente retornará False.
-Caso contrário, retornará node.is_end_of_word (True).
+Respostas:
+
+Começando pelo vértice A, a ordem é:
+
+A B C D E F
+
+Diferente da DFS que segue um padrão de pilha, a estrutura de dados usada para armazenar os nós temporários é uma fila.
 
 """
 
-class TrieNode:
+class Grafo:
     def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
+        self.lista_adjacencia = {}
 
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def insert(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
+            self.lista_adjacencia[vertice2].append(vertice1)
 
-    def search(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return node.is_end_of_word
+    def bfs(self, inicio):
+        visitados = set()
+        fila = [inicio]
 
-    def starts_with(self, prefix):
-        node = self.root
-        for char in prefix:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return True
-    
-    def delete(self, word):
+        while fila:
+            vertice = fila.pop(0)
+            if vertice not in visitados:
+                print(vertice, end=" ")
+                visitados.add(vertice)
+                fila.extend(self.lista_adjacencia[vertice])
 
-        def _delete(node, word, depth): # Auxiliary.
-            if depth == len(word):
-                if not node.is_end_of_word:
-                    return False
-                node.is_end_of_word = False
-                return len(node.children) == 0
-            char = word[depth]
+grafo = Grafo()
+vertices = ["A", "B", "C", "D", "E", "F"]
 
-            if char not in node.children:
-                return False
+for i in vertices:
+    grafo.adicionar_vertice(i)
 
-            should_delete_child = _delete(node.children[char], word, depth + 1)
+arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "E"), ("D", "F"), ("E", "F")]
 
-            if should_delete_child:
-                del node.children[char]
-                return len(node.children) == 0 and not node.is_end_of_word
-            
-            return False
-        
-        _delete(self.root, word, 0)
-            
-    def list_words(self):
-        
-        def _dfs(node, prefix, words):
-            if node.is_end_of_word:
-                words.append(prefix)
-            for char, child in node.children.items():
-                _dfs(child, prefix + char, words)
+for i, j in arestas:
+    grafo.adicionar_aresta(i, j)
 
-        words = []
-        _dfs(self.root, "", words)
-        return words
-
-trie = Trie()
-trie.insert("casa")
-trie.insert("carro")
-trie.insert("caminhão")
-
-print(trie.search("carro"))
-
-print(trie.list_words())
+grafo.bfs("A")

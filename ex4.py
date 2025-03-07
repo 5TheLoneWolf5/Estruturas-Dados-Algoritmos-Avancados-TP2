@@ -12,8 +12,8 @@ Vizinhos de Bairro C: ['Bairro A', 'Bairro B', 'Bairro D']
 
 Resposta:
 
-A lista de adjacência otimiza o armazenamento das conexões comparado à matriz de adjacência pois a matriz de adjacência ocupa um espaço para cada vértice na matriz para representar conexões de cada vértice,
-independentemente se o vértice em questão possui uma relação existente ou não (os valores sendo 0 ou 1).
+A lista de adjacência otimiza o armazenamento das conexões comparado à matriz de adjacência pois a matriz de adjacência necessita de espaços para representar todas as conexões entre cada vértice dentro de cada vértice na matriz,
+independentemente se o vértice em questão possui uma relação existente ou não (os valores sendo representados por 0 ou 1). De forma diferente, a lista de adjacência armazena apenas os valores existentes, portanto, sendo mais eficiente no armazenamento de um grafo com poucas arestas.
 
 """
 

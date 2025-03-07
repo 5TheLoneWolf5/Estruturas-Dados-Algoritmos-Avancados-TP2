@@ -1,89 +1,55 @@
 """
 
-Nesta implementação completa de uma árvore Trie, os métodos insert() e search() foram criados.
+- Grafo:
 
-Dentro da estrutura Trie, é possível armazenar um conjunto de palavras (com insert()) e organizar as letras de forma hierárquica para executar operações de busca com search() de modo eficiente.
+Cidades (Vértices): A, B, C, D, E, F
+Estradas (Arestas):
+
+A ↔ B
+A ↔ C
+B ↔ D
+C ↔ E
+D ↔ F
+
+Resposta:
+
+Para este caso, uma Lista de Adjacência é uma opção mais eficiente para armazenar este conjunto de dados, já que cada vértice dentro da estrutura possui apenas duas conexões, fazendo deste um grafo não denso.
+Um grafo denso seria um grafo com o número de arestas próximo ou igual ao número possível de arestas entre os vértices.
 
 """
 
-class TrieNode:
+class Grafo:
     def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
+        self.lista_adjacencia = {}
 
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def insert(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
+            self.lista_adjacencia[vertice2].append(vertice1)
 
-    def search(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return node.is_end_of_word
+    def mostrar_grafo(self):
+        for vertice in self.lista_adjacencia:
+            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
 
-    def starts_with(self, prefix):
-        node = self.root
-        for char in prefix:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return True
-    
-    def delete(self, word):
 
-        def _delete(node, word, depth): # Auxiliary.
-            if depth == len(word):
-                if not node.is_end_of_word:
-                    return False
-                node.is_end_of_word = False
-                return len(node.children) == 0
-            char = word[depth]
+    def mostrar_vizinhos(self, vertice):
+        if vertice in self.lista_adjacencia:
+            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
+        else:
+            print(f"O vértice {vertice} não existe no grafo.")
 
-            if char not in node.children:
-                return False
+grafo = Grafo()
 
-            should_delete_child = _delete(node.children[char], word, depth + 1)
+for v in ["A", "B", "C", "D", "E", "F"]:
+    grafo.adicionar_vertice(v)
 
-            if should_delete_child:
-                del node.children[char]
-                return len(node.children) == 0 and not node.is_end_of_word
-            
-            return False
-        
-        _delete(self.root, word, 0)
-            
-    def list_words(self):
-        
-        def _dfs(node, prefix, words):
-            if node.is_end_of_word:
-                words.append(prefix)
-            for char, child in node.children.items():
-                _dfs(child, prefix + char, words)
+arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "E"), ("D", "F"), ("E", "F")]
+for v1, v2 in arestas:
+    grafo.adicionar_aresta(v1, v2)
 
-        words = []
-        _dfs(self.root, "", words)
-        return words
-
-trie = Trie()
-trie.insert("carro")
-trie.insert("casa")
-trie.insert("carteira")
-trie.insert("car")
-
-print(trie.list_words())
-print(trie.search("carro"))
-print(trie.search("caro"))
-print(trie.starts_with("car"))
-print(trie.starts_with("scar"))
-trie.delete("carro")
-print(trie.list_words())
+print("Lista de Adjacência do Grafo:")
+grafo.mostrar_grafo()

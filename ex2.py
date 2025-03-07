@@ -4,7 +4,7 @@ Para este exercício, foi implementado uma Lista de Adjacência.
 
 Justificação:
 
-Se o objetivo for encontrar a rota mais curta entre dois barros, a Lista de Adjacência com BFS (Breadth-first search) é uma melhor opção porque a .
+Se o objetivo for encontrar a rota mais curta entre dois bairros, a Lista de Adjacência com BFS (Breadth-first search) é uma melhor opção por conta da estrutura utilizar menos memória e por guardar apenas as conexões existentes entre os bairros.
 
 """
 
