@@ -1,107 +1,71 @@
 """
 
-Dada a natureza hierárquica e otimizada para buscas de prefixos em uma estrutura de dados Trie, ela pode ser usada para um sistema de autocomplete com eficiência e clareza em seu propósito.
+Resposta:
+
+A DFS pode ser mais eficiente que a BFS em encontrar caminhos de labirintos, detecção de ciclos, no solucionamento de quebra-cabeças como Sudoku e outros.
+
+Enquanto isso, a BFS pode ser mais eficiente que a DFS em encontrar o caminho mais curto em um grafo não ponderado, análise de amigos em uma rede social, web crawling e outros.
 
 """
 
-class TrieNode:
+class Grafo:
     def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
+        self.lista_adjacencia = {}
 
-class Trie:
-    def __init__(self):
-        self.root = TrieNode()
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def insert(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
 
-    def search(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return node.is_end_of_word
+    def mostrar_grafo(self):
+        for vertice in self.lista_adjacencia:
+            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
 
-    def starts_with(self, prefix):
-        node = self.root
-        for char in prefix:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return True
-    
-    def delete(self, word):
+    def mostrar_vizinhos(self, vertice):
+        if vertice in self.lista_adjacencia:
+            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
+        else:
+            print(f"O vértice {vertice} não existe no grafo.")
 
-        def _delete(node, word, depth): # Auxiliary.
-            if depth == len(word):
-                if not node.is_end_of_word:
-                    return False
-                node.is_end_of_word = False
-                return len(node.children) == 0
-            char = word[depth]
+    def bfs(self, inicio):
+        visitados = set()
+        fila = [inicio]
 
-            if char not in node.children:
-                return False
+        while fila:
+            vertice = fila.pop(0)
+            if vertice not in visitados:
+                print(vertice, end=" ")
+                visitados.add(vertice)
+                fila.extend(self.lista_adjacencia[vertice])
 
-            should_delete_child = _delete(node.children[char], word, depth + 1)
+    def dfs_recursivo(self, vertice, visitados=None):
+        if visitados is None:
+            visitados = set()
 
-            if should_delete_child:
-                del node.children[char]
-                return len(node.children) == 0 and not node.is_end_of_word
-            
-            return False
-        
-        _delete(self.root, word, 0)
+        print(vertice, end=" ")
+        visitados.add(vertice)
 
-    def list_words(self):
-        
-        def _dfs(node, prefix, words):
-            if node.is_end_of_word:
-                words.append(prefix)
-            for char, child in node.children.items():
-                _dfs(child, prefix + char, words)
+        for vizinho in self.lista_adjacencia[vertice]:
+            if vizinho not in visitados:
+                self.dfs_recursivo(vizinho, visitados)
 
-        words = []
-        _dfs(self.root, "", words)
-        return words
-    
-    def suggestions_rec(self, node, word):
-        if node.is_end_of_word:
-            print(word)
-        for a, n in node.children.items():
-            self.suggestions_rec(n, word + a)
-    
-    def print_auto_suggestions(self, key):
-        node = self.root
+grafo = Grafo()
 
-        for a in key:
-            if not node.children.get(a):
-                return 0
-            node = node.children[a]
-            
-        if not node.children:
-            return -1
+for v in [1, 2, 3, 4, 5, 6]:
+    grafo.adicionar_vertice(v)
 
-        self.suggestions_rec(node, key)
-        return 1
+arestas = [(1, 2), (1, 3), (2, 4), (3, 5), (4, 6), (5, 6)]
+for v1, v2 in arestas:
+    grafo.adicionar_aresta(v1, v2)
 
-trie = Trie()
-trie.insert("carro")
-trie.insert("casa")
-trie.insert("carteira")
-trie.insert("car")
+print("Lista de Adjacência do Grafo:")
+grafo.mostrar_grafo()
 
-print(trie.list_words())
+grafo.mostrar_vizinhos(2)
+
+grafo.bfs(1)
 print()
-res = trie.print_auto_suggestions("carr")
-if res == -1:
-    print("Nenhuma outra string encontrada.")
-elif res == 0:
-    print("Nenhuma string encontrada.")
+grafo.dfs_recursivo(1)

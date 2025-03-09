@@ -1,128 +1,56 @@
 """
 
-Alguns casos de uso onde as estruras Trie podem ser utilizadas são:
-
-Sistemas de Correção Ortográficas,
-Processamento de Linguagem Natural (PLN),
-Roteamento de Endereços IP
-Funcionalidade de autocompletar e sugestão,
-Bancos de Dados e
-Motores de Busca.
-
-Para este exercício, estarei implementando a árvore Trie em uma aplicação para um sistema de autocompletar ou sugerir palavras.
+No código abaixo, utilizo BFS para encontrar o caminho mais curto entre o bairro A e o bairro F. Também é retornado o caminho e bairros percorridos.
 
 """
 
-class TrieNode:
+class Grafo:
     def __init__(self):
-        self.children = {}
-        self.is_end_of_word = False
+        self.lista_adjacencia = {}
 
-class AutocompleteTrie:
-    def __init__(self):
-        self.root = TrieNode()
+    def adicionar_vertice(self, vertice):
+        if vertice not in self.lista_adjacencia:
+            self.lista_adjacencia[vertice] = []
 
-    def insert(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                node.children[char] = TrieNode()
-            node = node.children[char]
-        node.is_end_of_word = True
+    def adicionar_aresta(self, vertice1, vertice2):
+        if vertice1 in self.lista_adjacencia and vertice2 in self.lista_adjacencia:
+            self.lista_adjacencia[vertice1].append(vertice2)
+            self.lista_adjacencia[vertice2].append(vertice1)
 
-    def search(self, word):
-        node = self.root
-        for char in word:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return node.is_end_of_word
+    def mostrar_grafo(self):
+        for vertice in self.lista_adjacencia:
+            print(f"{vertice} -> {self.lista_adjacencia[vertice]}")
 
-    def starts_with(self, prefix):
-        node = self.root
-        for char in prefix:
-            if char not in node.children:
-                return False
-            node = node.children[char]
-        return True
-    
-    def delete(self, word):
+    def mostrar_vizinhos(self, vertice):
+        if vertice in self.lista_adjacencia:
+            print(f"Vizinhos de {vertice}: {self.lista_adjacencia[vertice]}")
+        else:
+            print(f"O vértice {vertice} não existe no grafo.")
 
-        def _delete(node, word, depth): # Auxiliary.
-            if depth == len(word):
-                if not node.is_end_of_word:
-                    return False
-                node.is_end_of_word = False
-                return len(node.children) == 0
-            char = word[depth]
+    def bfs(self, inicio, objetivo):
+        visitados = set()
+        fila = [inicio]
 
-            if char not in node.children:
-                return False
-
-            should_delete_child = _delete(node.children[char], word, depth + 1)
-
-            if should_delete_child:
-                del node.children[char]
-                return len(node.children) == 0 and not node.is_end_of_word
-            
-            return False
+        while fila:
+            vertice = fila.pop(0)
+            if vertice not in visitados:
+                print(vertice, end=" ")
+                if vertice == objetivo:
+                    print(f"\n{objetivo} encontrado!")
+                    return visitados
+                visitados.add(vertice)
+                fila.extend(self.lista_adjacencia[vertice])
         
-        _delete(self.root, word, 0)
-            
-    def list_words(self):
-        
-        def _dfs(node, prefix, words):
-            if node.is_end_of_word:
-                words.append(prefix)
-            for char, child in node.children.items():
-                _dfs(child, prefix + char, words)
+grafo = Grafo()
 
-        words = []
-        _dfs(self.root, "", words)
-        return words
+for v in ["A", "B", "C", "D", "E", "F"]:
+    grafo.adicionar_vertice(v)
 
-    def suggestions_rec(self, node, word):
-        if node.is_end_of_word:
-            print(word)
-        for a, n in node.children.items():
-            self.suggestions_rec(n, word + a)
-    
-    def print_auto_suggestions(self, key):
-        node = self.root
+arestas = [("A", "B"), ("A", "C"), ("B", "D"), ("C", "D"), ("F", "C")]
+for v1, v2 in arestas:
+    grafo.adicionar_aresta(v1, v2)
 
-        for a in key:
-            if not node.children.get(a):
-                return 0
-            node = node.children[a]
-            
-        if not node.children:
-            return -1
+print("Lista de Adjacência do Grafo:")
+grafo.mostrar_grafo()
 
-        self.suggestions_rec(node, key)
-        return 1
-
-trie = AutocompleteTrie()
-
-trie.insert("carro")
-trie.insert("casa")
-trie.insert("carteira")
-trie.insert("car")
-
-print(trie.list_words())
-print()
-
-while True:
-    user_input = input("Digite um prefixo ou palavra para autocompletá-la (e verificar outras opções): ")
-    res = trie.print_auto_suggestions(user_input)
-    if res == -1:
-        print("Nenhuma outra string encontrada.")
-    elif res == 0:
-        print("Nenhuma string encontrada.")
-    
-"""
-print(trie.search("caro"))
-print(trie.starts_with("car"))
-print(trie.starts_with("scar"))
-trie.delete("carro")
-print(trie.list_words())
-"""
+grafo.bfs("A", "C")

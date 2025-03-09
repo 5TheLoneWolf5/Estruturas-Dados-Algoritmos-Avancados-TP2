@@ -2,9 +2,9 @@
 
 Respostas:
 
-O sistema pode priorizar
+O sistema pode priorizar transações que envolvem múltiplas instuições financeiras por analisar grafos de transação com um maior número de arestas e ligações (entre contas) e assim, analisar possíveis ciclos.
 
-As medidas que podem ser tomadas são:
+Assim que um ciclo suspeito é detectado, algumas das medidas que podem ser tomadas é a implementação de uma funcionalidade de notificação para os departamentos responsáveis do banco e também o possível bloqueio da conta em questão.
 
 """
 
